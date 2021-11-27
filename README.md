@@ -8,7 +8,7 @@ TODO:
 - Test concurrent data structures;
 - Add the proper memory model to speed up;
 
-All Links used:
+All the links used:
 --------------------------------------------------------------------------------------
 - https://livebook.manning.com/book/c-plus-plus-concurrency-in-action/chapter-7/155;
 - https://stackoverflow.com/questions/38984153/how-can-i-implement-aba-counter-with-c11-cas/38991835;

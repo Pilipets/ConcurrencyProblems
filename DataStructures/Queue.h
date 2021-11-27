@@ -11,7 +11,7 @@ namespace concurrent_ds::queues {
 	// http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.53.8674&rep=rep1&type=pdf
 	// https://neerc.ifmo.ru/wiki/index.php?title=%D0%9E%D1%87%D0%B5%D1%80%D0%B5%D0%B4%D1%8C_%D0%9C%D0%B0%D0%B9%D0%BA%D0%BB%D0%B0_%D0%B8_%D0%A1%D0%BA%D0%BE%D1%82%D1%82%D0%B0
 	template <class T>
-	class ConcurrentQueue {
+	class ConcurrentRawQueue {
 		struct Node {
 			T val;
 			std::atomic<Node*> next;
@@ -19,14 +19,14 @@ namespace concurrent_ds::queues {
 			Node(T val = T()) : val(std::move(val)), next(nullptr) {}
 		};
 
-		ConcurrentQueue(ConcurrentQueue&) = delete;
-		ConcurrentQueue& operator=(ConcurrentQueue&) = delete;
+		ConcurrentRawQueue(ConcurrentRawQueue&) = delete;
+		ConcurrentRawQueue& operator=(ConcurrentRawQueue&) = delete;
 
 		std::atomic<Node*> head, tail;
 
 	public:
-		ConcurrentQueue() : head(new Node()), tail(head.load()) {}
-		~ConcurrentQueue() { while (pop()); }
+		ConcurrentRawQueue() : head(new Node()), tail(head.load()) {}
+		~ConcurrentRawQueue() { while (pop()); }
 
 		void push(T val) {
 			std::atomic<Node*> new_node = new Node(std::move(val));
