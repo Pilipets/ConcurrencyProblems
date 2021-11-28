@@ -145,7 +145,7 @@
     <ClInclude Include="CyclicBarrier.h" />
     <ClInclude Include="LightSwitch.h" />
     <ClInclude Include="Multiplex.h" />
-    <ClInclude Include="Queue.h" />
+    <ClInclude Include="SignalQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

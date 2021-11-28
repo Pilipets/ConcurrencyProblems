@@ -53,7 +53,7 @@ namespace concurrent::ds::stacks {
 		}
 
 		Reference pop() {
-			auto p = std::atomic_load(&head);
+			auto p = head.load(); // std::atomic_load(&head);
 			while (p && !head.compare_exchange_weak(p, p->next)); // std::atomic_compare_exchange_weak(&head, &p, p->next));
 			return Reference(std::move(p));
 		}

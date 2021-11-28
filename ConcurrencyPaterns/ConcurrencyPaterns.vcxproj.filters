@@ -24,7 +24,7 @@
     <ClInclude Include="CyclicBarrier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Queue.h">
+    <ClInclude Include="SignalQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LightSwitch.h">
