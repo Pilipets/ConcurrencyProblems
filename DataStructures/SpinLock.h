@@ -2,7 +2,7 @@
 
 #include <atomic>
 
-namespace concurrent_ds::locks {
+namespace concurrent::ds::locks {
 
 	class SpinLock {
         std::atomic_flag flag = ATOMIC_FLAG_INIT;

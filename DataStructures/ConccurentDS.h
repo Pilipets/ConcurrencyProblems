@@ -5,7 +5,7 @@
 #include "SpinLock.h"
 
 // This is the most reliable options
-namespace concurrent_ds {
+namespace concurrent::ds {
 
 	template <class T>
 	using stack = stacks::ConcurrentSharedStack<T>;

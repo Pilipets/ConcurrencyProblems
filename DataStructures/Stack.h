@@ -6,7 +6,7 @@
 #include <mutex>
 #include <optional>
 
-namespace concurrent_ds::stacks {
+namespace concurrent::ds::stacks {
 
 	// Because of using std::shared_ptr, the ABA problem is gone - however,
 	// this is not lock-free because of spinlock underneath.
