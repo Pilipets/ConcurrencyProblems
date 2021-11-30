@@ -27,13 +27,8 @@ namespace concurrent::ds::stacks {
 		ConcurrentStack() = default;
 		~ConcurrentStack() = default;
 
-		const T& top() const {
-			return head.load()->val;
-		}
-
-		T& top() {
-			return head.load()->val;
-		}
+		const T& top() const { return head.load()->val; }
+		T& top() { return head.load()->val; }
 
 		NodePtr find(const T& val) const {
 			auto p = head.load();
@@ -55,6 +50,8 @@ namespace concurrent::ds::stacks {
 			while (p && !head.compare_exchange_weak(p, p->next));
 			return p ? std::optional<T>(std::move(p->val)) : std::nullopt;
 		}
+
+		bool empty() const { return head.load() == nullptr; }
 	};
 
 	template <class T, class LockType = std::mutex>
@@ -84,64 +81,61 @@ namespace concurrent::ds::stacks {
 			s.push(std::move(std::move(val)));
 		}
 
-		void pop() {
+		std::optional<T> pop() {
 			std::scoped_lock<LockType> lk(mx);
+			if (s.empty()) return std::nullopt;
+
+			int ret = s.top();
 			s.pop();
+			return ret;
+		}
+
+		bool empty() const {
+			std::scoped_lock<LockType> lk(mx);
+			return s.empty();
 		}
 	};
 
-	/*
 	namespace unsafe {
 
-		// https://lumian2015.github.io/lockFreeProgramming/
-		// We can't safely delete nodes in the below implementation.
 		template <class T>
 		class AtomicStack {
+			struct Node;
+			using NodePtr = Node*;
 			struct Node {
 				T val;
-				Node* next;
+				NodePtr next;
 			};
 
-			struct TaggedNode {
-				uint16_t tag;
-				Node* head;
-			};
-			std::atomic<TaggedNode> tagged_head{};
+			std::atomic<NodePtr> head;
 
 			AtomicStack(AtomicStack&) = delete;
 			AtomicStack& operator=(AtomicStack&) = delete;
 
 		public:
 			AtomicStack() = default;
-			~AtomicStack() { while (pop()); }
+			~AtomicStack() = default;
+
+			T& top() { return head.load()->val; }
+			const T& top() const { return head.load()->val; }
 
 			void push(T val) {
-				TaggedNode next, orig = tagged_head.load();
+				auto p = new Node(std::move(val));
+				p->next = head;
 
-				Node* node = new Node();
-				node->val = std::move(val);
-				do {
-					node->next = orig.head;
-					next.head = node;
-					next.tag = orig.tag + 1;
-				} while (!tagged_head.compare_exchange_weak(orig, next));
+				while (!head.compare_exchange_weak(p->next, p));
 			}
 
 			std::optional<T> pop() {
-				TaggedNode next, orig = tagged_head.load();
-				do {
-					if (orig.head == nullptr) return std::nullopt;
-					next.head = orig.head->next; // head can be deleted here, so it's not safe to delete
-					next.tag = orig.tag + 1;
-				} while (!tagged_head.compare_exchange_weak(orig, next));
+				auto p = head.load();
 
-				T val = std::move(orig.head->val);
-				delete orig.head; // we can't delete nodes here
-				return val;
+				while (p && !head.compare_exchange_weak(p, p->next));
+				return p ? std::optional<T>(std::move(p->val)) : std::nullopt;
 			}
+
+			bool empty() const { return head.load() == nullptr; }
 		};
 
 	}
-	*/
 
 }

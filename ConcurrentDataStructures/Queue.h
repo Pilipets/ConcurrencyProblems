@@ -12,12 +12,11 @@ namespace concurrent::ds::queues {
 	class ConcurrentQueue {
 		struct Node;
 		using NodePtr = std::shared_ptr<Node>;
-
 		struct Node {
 			T val;
 			std::atomic<NodePtr> next;
 
-			Node(T val = T()) : val(std::move(val)) {}
+			Node(T val = T()) : val(std::move(val)), next{} {}
 		};
 
 		ConcurrentQueue(ConcurrentQueue&) = delete;
@@ -33,7 +32,7 @@ namespace concurrent::ds::queues {
 			std::atomic<NodePtr> new_node = std::make_shared<Node>(std::move(val));
 
 			while (true) {
-				NodePtr old_tail = tail, dummy;
+				NodePtr old_tail = tail.load(), dummy{};
 
 				if (old_tail->next.compare_exchange_weak(dummy, new_node)) {
 					tail.compare_exchange_weak(old_tail, new_node);
@@ -66,6 +65,10 @@ namespace concurrent::ds::queues {
 				}
 			}
 		}
+
+		bool empty() const {
+			return head.load()->next.load() == nullptr;
+		}
 	};
 
 	template <class T, class LockType = std::mutex>
@@ -74,7 +77,7 @@ namespace concurrent::ds::queues {
 			T val;
 			Node* next = nullptr;
 
-			Node(T val) : val(std::move(val)) {}
+			Node(T val = T()) : val(std::move(val)) {}
 		};
 
 		mutable LockType head_mx, tail_mx;
@@ -108,12 +111,18 @@ namespace concurrent::ds::queues {
 				Node *new_head = node->next;
 				if (new_head == nullptr) return std::nullopt;
 
-				*res = std::move(new_head->val);
+				res = std::move(new_head->val);
 				head = new_head;
 			}
 
+			
 			delete node;
 			return res;
+		}
+
+		bool empty() const {
+			std::scoped_lock<LockType> lk(head_mx);
+			return head->next == nullptr;
 		}
 	};
 
@@ -144,10 +153,86 @@ namespace concurrent::ds::queues {
 			q.push(std::move(val));
 		}
 
-		void pop() {
+		std::optional<T> pop() {
 			std::scoped_lock<LockType> lk(mx);
+			if (q.empty()) return std::nullopt;
+
+			int ret = q.front();
 			q.pop();
+			return ret;
+		}
+
+		bool empty() const {
+			std::scoped_lock<LockType> lk(mx);
+			return q.empty();
 		}
 	};
+
+	namespace unsafe {
+
+		template <class T>
+		class AtomicQueue {
+			struct Node;
+			using NodePtr = Node*;
+			struct Node {
+				T val;
+				std::atomic<NodePtr> next;
+
+				Node(T val = T()) : val(std::move(val)), next{} {}
+			};
+
+			AtomicQueue(AtomicQueue&) = delete;
+			AtomicQueue& operator=(AtomicQueue&) = delete;
+
+			std::atomic<NodePtr> head, tail;
+
+		public:
+			AtomicQueue() : head(new Node()), tail(head.load()) {}
+			~AtomicQueue() = default;
+
+			void push(T val) {
+				std::atomic<NodePtr> new_node = new Node(std::move(val));
+
+				while (true) {
+					NodePtr old_tail = tail.load(), dummy{};
+
+					if (old_tail->next.compare_exchange_weak(dummy, new_node)) {
+						tail.compare_exchange_weak(old_tail, new_node);
+						return;
+					}
+					else {
+						// Help to move tail to ensure lock-free
+						tail.compare_exchange_weak(old_tail, old_tail->next.load());
+					}
+				}
+			}
+
+			std::optional<T> pop() {
+				while (true) {
+					NodePtr old_head = head, old_tail = tail;
+					NodePtr next_head = old_head->next;
+
+					if (old_head == old_tail) {
+						if (next_head == nullptr) return std::nullopt;
+						else {
+							// Help to move tail to ensure lock-free
+							tail.compare_exchange_weak(old_tail, next_head);
+						}
+					}
+
+					else {
+						if (head.compare_exchange_weak(old_head, next_head))
+							return next_head->val;
+
+					}
+				}
+			}
+
+			bool empty() const {
+				return head.load()->next.load() == nullptr;
+			}
+		};
+
+	}
 
 }

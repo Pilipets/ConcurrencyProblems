@@ -1,14 +1,14 @@
 Recently, I encountered a problem with finding easy-to-use and easy-to-understand neat atomic/concurrent data structures and solutions to common concurrency problems using C++20.
+This repository is for educational purposes.
 
 This repository is a solution to the above-described problems:
 - Atomic/Concurrent data-structures: stack, queue, spinlock;
 - Concurrency patterns: Multiplex, Barrier, SignalQueue, LightSwitch;
+- Performance tests of ThreadSafe data structures implementations;
 
 TODO:
-- Fix memory leaks in AtomicQueue;
 - Add more common concurrency problems mentioned here - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;
-- Test concurrent data structures;
-- Add the proper memory model to speed up;
+- Add the proper memory model to speed up ConcurrentDatastructures;
 
 All the links used:
 --------------------------------------------------------------------------------------
