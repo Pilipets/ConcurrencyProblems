@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrencyProblems", "Conc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataStructures", "DataStructures\DataStructures.vcxproj", "{F731DD79-4D20-4C83-B0CE-E5AA4B5B15E7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrencyPaterns", "ConcurrencyPaterns\ConcurrencyPaterns.vcxproj", "{8303246E-0C63-41E8-81B1-A78C3ACA29EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrencyPatterns", "ConcurrencyPatterns\ConcurrencyPatterns.vcxproj", "{8303246E-0C63-41E8-81B1-A78C3ACA29EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

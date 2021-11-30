@@ -8,31 +8,32 @@
 
 namespace concurrent::ds::queues {
 
-	// http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.53.8674&rep=rep1&type=pdf
-	// https://neerc.ifmo.ru/wiki/index.php?title=%D0%9E%D1%87%D0%B5%D1%80%D0%B5%D0%B4%D1%8C_%D0%9C%D0%B0%D0%B9%D0%BA%D0%BB%D0%B0_%D0%B8_%D0%A1%D0%BA%D0%BE%D1%82%D1%82%D0%B0
 	template <class T>
-	class ConcurrentRawQueue {
+	class ConcurrentQueue {
+		struct Node;
+		using NodePtr = std::shared_ptr<Node>;
+
 		struct Node {
 			T val;
-			std::atomic<Node*> next;
+			std::atomic<NodePtr> next;
 
-			Node(T val = T()) : val(std::move(val)), next(nullptr) {}
+			Node(T val = T()) : val(std::move(val)) {}
 		};
 
-		ConcurrentRawQueue(ConcurrentRawQueue&) = delete;
-		ConcurrentRawQueue& operator=(ConcurrentRawQueue&) = delete;
+		ConcurrentQueue(ConcurrentQueue&) = delete;
+		ConcurrentQueue& operator=(ConcurrentQueue&) = delete;
 
-		std::atomic<Node*> head, tail;
+		std::atomic<NodePtr> head, tail;
 
 	public:
-		ConcurrentRawQueue() : head(new Node()), tail(head.load()) {}
-		~ConcurrentRawQueue() { while (pop()); }
+		ConcurrentQueue() : head(std::make_shared<Node>()), tail(head.load()) {}
+		~ConcurrentQueue() = default;
 
 		void push(T val) {
-			std::atomic<Node*> new_node = new Node(std::move(val));
+			std::atomic<NodePtr> new_node = std::make_shared<Node>(std::move(val));
 
 			while (true) {
-				Node *old_tail = tail.load(), *dummy = nullptr;
+				NodePtr old_tail = tail, dummy;
 
 				if (old_tail->next.compare_exchange_weak(dummy, new_node)) {
 					tail.compare_exchange_weak(old_tail, new_node);
@@ -47,8 +48,8 @@ namespace concurrent::ds::queues {
 
 		std::optional<T> pop() {
 			while (true) {
-				Node* old_head = head.load(), *old_tail = tail.load();
-				Node *next_head = old_head->next.load();
+				NodePtr old_head = head, old_tail = tail;
+				NodePtr next_head = old_head->next;
 
 				if (old_head == old_tail) {
 					if (next_head == nullptr) return std::nullopt;
@@ -67,12 +68,13 @@ namespace concurrent::ds::queues {
 		}
 	};
 
-	// https://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html
 	template <class T, class LockType = std::mutex>
 	class TwoLockQueue {
 		struct Node {
 			T val;
 			Node* next = nullptr;
+
+			Node(T val) : val(std::move(val)) {}
 		};
 
 		mutable LockType head_mx, tail_mx;
@@ -83,11 +85,13 @@ namespace concurrent::ds::queues {
 
 	public:
 		TwoLockQueue() : head(new Node()), tail(head) {}
-		~TwoLockQueue() { delete head; }
+		~TwoLockQueue() {
+			while (pop());
+			delete head;
+		}
 
 		void push(T val) {
-			Node* node = new Node();
-			node->val = std::move(val);
+			Node* node = new Node(std::move(val));
 
 			std::scoped_lock<LockType> lk(tail_mx);
 			tail->next = node;
@@ -100,9 +104,9 @@ namespace concurrent::ds::queues {
 
 			{
 				std::scoped_lock<LockType> lk(head_mx);
-				*node = head;
+				node = head;
 				Node *new_head = node->next;
-				if (new_head == nullptr) return res;
+				if (new_head == nullptr) return std::nullopt;
 
 				*res = std::move(new_head->val);
 				head = new_head;
@@ -135,9 +139,9 @@ namespace concurrent::ds::queues {
 			return q.front();
 		}
 
-		void push(T t) {
+		void push(T val) {
 			std::scoped_lock<LockType> lk(mx);
-			q.push(std::move(t));
+			q.push(std::move(val));
 		}
 
 		void pop() {
@@ -145,4 +149,5 @@ namespace concurrent::ds::queues {
 			q.pop();
 		}
 	};
+
 }

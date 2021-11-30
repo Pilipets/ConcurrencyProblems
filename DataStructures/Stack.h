@@ -6,56 +6,54 @@
 #include <mutex>
 #include <optional>
 
+
 namespace concurrent::ds::stacks {
 
-	// Because of using std::shared_ptr, the ABA problem is gone - however,
-	// this is not lock-free because of spinlock underneath.
-	// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4162.pdf
 	template <class T>
-	class ConcurrentSharedStack {
+	class ConcurrentStack {
+		struct Node;
+		using NodePtr = std::shared_ptr<Node>;
 		struct Node {
 			T val;
-			std::shared_ptr<Node> next;
+			NodePtr next;
+			Node(T val) : val(std::move(val)) {}
 		};
 
-		std::atomic<std::shared_ptr<Node>> head; // std::shared_ptr<Node> head;
-		ConcurrentSharedStack(ConcurrentSharedStack&) = delete;
-		ConcurrentSharedStack& operator=(ConcurrentSharedStack&) = delete;
+		std::atomic<NodePtr> head;
+		ConcurrentStack(ConcurrentStack&) = delete;
+		ConcurrentStack& operator=(ConcurrentStack&) = delete;
 
 	public:
-		ConcurrentSharedStack() = default;
-		~ConcurrentSharedStack() = default;
+		ConcurrentStack() = default;
+		~ConcurrentStack() = default;
 
-		class Reference {
-			std::shared_ptr<Node> p;
-		public:
-			Reference(std::shared_ptr<Node> p) : p(p) {}
-			T& operator* () { return p->val; }
-			T* operator->() { return &p->val; }
-		};
-
-		Reference find(const T& val) const {
-			auto p = head.load(); // std::atomic_load(&head);
-			while (p && p->val != val) p = p->next;
-			return Reference(std::move(p));
+		const T& top() const {
+			return head.load()->val;
 		}
 
-		Reference top() const {
-			return Reference(head); // std::atomic_load(&head)
+		T& top() {
+			return head.load()->val;
+		}
+
+		NodePtr find(const T& val) const {
+			auto p = head.load();
+
+			while (p && p->val != val) p = p->next;
+			return p;
 		}
 
 		void push(T val) {
-			auto p = std::make_shared<Node>();
-			p->val = std::move(val);
-			p->next = head; // std::atomic_load(&head);
+			auto p = std::make_shared<Node>(std::move(val));
+			p->next = head;
 
-			while (!head.compare_exchange_weak(p->next, p)); // std::atomic_compare_exchange_weak(&head, &p->next, p));
+			while (!head.compare_exchange_weak(p->next, p));
 		}
 
-		Reference pop() {
-			auto p = head.load(); // std::atomic_load(&head);
-			while (p && !head.compare_exchange_weak(p, p->next)); // std::atomic_compare_exchange_weak(&head, &p, p->next));
-			return Reference(std::move(p));
+		std::optional<T> pop() {
+			auto p = head.load();
+
+			while (p && !head.compare_exchange_weak(p, p->next));
+			return p ? std::optional<T>(std::move(p->val)) : std::nullopt;
 		}
 	};
 
@@ -81,9 +79,9 @@ namespace concurrent::ds::stacks {
 			return s.top();
 		}
 
-		void push(T t) {
+		void push(T val) {
 			std::scoped_lock<LockType> lk(mx);
-			s.push(std::move(t));
+			s.push(std::move(std::move(val)));
 		}
 
 		void pop() {
@@ -92,51 +90,58 @@ namespace concurrent::ds::stacks {
 		}
 	};
 
-	// https://lumian2015.github.io/lockFreeProgramming/
-	template <class T>
-	class AtomicStack {
-		struct Node {
-			T val;
-			Node* next;
+	/*
+	namespace unsafe {
+
+		// https://lumian2015.github.io/lockFreeProgramming/
+		// We can't safely delete nodes in the below implementation.
+		template <class T>
+		class AtomicStack {
+			struct Node {
+				T val;
+				Node* next;
+			};
+
+			struct TaggedNode {
+				uint16_t tag;
+				Node* head;
+			};
+			std::atomic<TaggedNode> tagged_head{};
+
+			AtomicStack(AtomicStack&) = delete;
+			AtomicStack& operator=(AtomicStack&) = delete;
+
+		public:
+			AtomicStack() = default;
+			~AtomicStack() { while (pop()); }
+
+			void push(T val) {
+				TaggedNode next, orig = tagged_head.load();
+
+				Node* node = new Node();
+				node->val = std::move(val);
+				do {
+					node->next = orig.head;
+					next.head = node;
+					next.tag = orig.tag + 1;
+				} while (!tagged_head.compare_exchange_weak(orig, next));
+			}
+
+			std::optional<T> pop() {
+				TaggedNode next, orig = tagged_head.load();
+				do {
+					if (orig.head == nullptr) return std::nullopt;
+					next.head = orig.head->next; // head can be deleted here, so it's not safe to delete
+					next.tag = orig.tag + 1;
+				} while (!tagged_head.compare_exchange_weak(orig, next));
+
+				T val = std::move(orig.head->val);
+				delete orig.head; // we can't delete nodes here
+				return val;
+			}
 		};
 
-		struct TaggedNode {
-			uint16_t tag;
-			Node* head;
-		};
-		std::atomic<TaggedNode> tagged_head{};
-
-		AtomicStack(AtomicStack&) = delete;
-		AtomicStack& operator=(AtomicStack&) = delete;
-
-	public:
-		AtomicStack() = default;
-		~AtomicStack() { while (pop()); }
-
-		void push(T val) {
-			TaggedNode next, orig = tagged_head.load();
-
-			Node* node = new Node();
-			node->val = std::move(val);
-			do {
-				node->next = orig.head;
-				next.head = node;
-				next.tag = orig.tag + 1;
-			} while (!tagged_head.compare_exchange_weak(orig, next));
-		}
-
-		std::optional<T> pop() {
-			TaggedNode next, orig = tagged_head.load();
-			do {
-				if (orig.head == nullptr) return std::nullopt;
-				next.head = orig.head->next;
-				next.tag = orig.tag + 1;
-			} while (!tagged_head.compare_exchange_weak(orig, next));
-
-			T val = std::move(orig.head->val);
-			delete orig.head; // is this really safe?
-			return val;
-		}
-	};
+	}
+	*/
 
 }

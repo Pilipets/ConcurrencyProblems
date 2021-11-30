@@ -8,11 +8,11 @@
 namespace concurrent::ds {
 
 	template <class T>
-	using stack = stacks::ConcurrentSharedStack<T>;
+	using stack = stacks::ConcurrentStack<T>;
 
 	using spinlock = locks::SpinLock;
 
 	template <class T>
-	using queue = queues::ConcurrentRawQueue<T>;
+	using queue = queues::ConcurrentQueue<T>;
 
 }
