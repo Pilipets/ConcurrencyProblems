@@ -7,6 +7,7 @@ This repository is a solution to the above-described problems:
 - Performance tests of ThreadSafe data structures implementations;
 
 TODO:
+- Add more simple implmentations of the concurrent data structures without memory leaks;
 - Add more common concurrency problems mentioned here - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;
 - Add the proper memory model to speed up ConcurrentDatastructures;
 
@@ -25,3 +26,4 @@ All the links used:
 - https://lumian2015.github.io/lockFreeProgramming/;
 --------------------------------------------------------------------------------------
 - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;
+- https://www.bogotobogo.com/cplusplus/files/CplusplusConcurrencyInAction_PracticalMultithreading.pdf

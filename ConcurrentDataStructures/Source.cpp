@@ -140,26 +140,27 @@ void testDataStructures() {
 	using namespace concurrent::ds;
 	using Duration = std::chrono::duration<double, std::ratio<1, 1000>>;
 
-	std::vector<std::array<int, 3>> input_data = {
+	std::vector<std::array<int, 3>> producers_consumers_setup = {
 		{100000, 100000, 3},
 		{1000, 1000, 15},
 		{1000000, 1000000, 10},
-		{500, 500, 50},
+		{5000, 5000, 50},
 		{50000, 50000, 7},
 		{10, 10, 2}
 	};
 
 	testing::for_each(testing::TypeList<
-		stacks::ConcurrentStack<int>,
-		stacks::ThreadSafeStack<int>,
+		stacks::AtomicSharedStack<int>,
+		stacks::AtomicReclaimStack<int>,
+		stacks::ThreadSafeStack<int, std::mutex>,
 		stacks::ThreadSafeStack<int, locks::SpinLock>,
-		stacks::unsafe::AtomicStack<int>,
+		stacks::unsafe::AtomicLeakStack<int>/*,
 		queues::ConcurrentQueue<int>,
 		queues::TwoLockQueue<int>,
 		queues::TwoLockQueue<int, locks::SpinLock>,
 		queues::ThreadSafeQueue<int>,
 		queues::ThreadSafeQueue<int, locks::SpinLock>,
-		queues::unsafe::AtomicQueue<int>
+		queues::unsafe::AtomicQueue<int>*/
 		>
 		{}
 		, [&](auto arg) {
@@ -171,14 +172,14 @@ void testDataStructures() {
 			[&](Container* c) { return c->pop(); },
 			[&](Container* c) { return c->empty(); },
 			[] { return rand(); },
-			input_data,
+			producers_consumers_setup,
 			true
 		);
 	});
 
 	testing::for_each(testing::TypeList<
-		boost::lockfree::stack<int>,
-		boost::lockfree::queue<int>
+		boost::lockfree::stack<int>/*,
+		boost::lockfree::queue<int>*/
 	>
 		{}
 	, [&](auto arg) {
@@ -190,7 +191,7 @@ void testDataStructures() {
 			[&](Container* c) { int val;  return c->pop(val); },
 			[&](Container* c) { return c->empty(); },
 			[] { return rand(); },
-			input_data,
+			producers_consumers_setup,
 			true,
 			0
 		);

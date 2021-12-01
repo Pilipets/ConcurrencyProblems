@@ -8,7 +8,7 @@
 namespace concurrent::ds {
 
 	template <class T>
-	using stack = stacks::ConcurrentStack<T>;
+	using stack = stacks::AtomicReclaimStack<T>;
 
 	using spinlock = locks::SpinLock;
 
