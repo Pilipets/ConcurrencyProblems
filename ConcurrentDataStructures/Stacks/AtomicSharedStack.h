@@ -8,13 +8,8 @@ namespace concurrent::ds::stacks {
 
 	template <class T>
 	class AtomicSharedStack {
-		struct Node;
-		using NodePtr = std::shared_ptr<Node>;
-		struct Node {
-			T val;
-			NodePtr next;
-			Node(T val) : val(std::move(val)) {}
-		};
+		using Node = SharedNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		std::atomic<NodePtr> head;
 		AtomicSharedStack(AtomicSharedStack&) = delete;

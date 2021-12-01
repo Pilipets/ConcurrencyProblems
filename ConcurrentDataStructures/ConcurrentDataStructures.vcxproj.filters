@@ -42,6 +42,12 @@
     <ClInclude Include="Stacks\LockBasedStack.h">
       <Filter>Header Files\Stacks</Filter>
     </ClInclude>
+    <ClInclude Include="Stacks\Common.h">
+      <Filter>Header Files\Stacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Stacks\AtomicRefCountStack.h">
+      <Filter>Header Files\Stacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

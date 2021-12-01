@@ -1,0 +1,62 @@
+Running tests for class concurrent::ds::stacks::AtomicSharedStack<int>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                5122.64ms
+        #1          30000             30         1                209.638ms
+        #2       20000000             20         1                 371365ms
+        #3         500000            100         1                4138.83ms
+        #4         700000             14         1                8669.61ms
+        #5       40000000              4         1                 102905ms
+
+Running tests for class concurrent::ds::stacks::AtomicReclaimStack<int>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                 153.57ms
+        #1          30000             30         1                38.1293ms
+        #2       20000000             20         1                6885.26ms
+        #3         500000            100         1                146.462ms
+        #4         700000             14         1                186.513ms
+        #5       40000000              4         1                6374.13ms
+
+Running tests for class concurrent::ds::stacks::AtomicRefCountStack<int>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                1065.48ms
+        #1          30000             30         1                66.5313ms
+        #2       20000000             20         1                 119507ms
+        #3         500000            100         1                5850.17ms
+        #4         700000             14         1                2039.01ms
+        #5       40000000              4         1                27630.8ms
+
+Running tests for class concurrent::ds::stacks::LockBasedStack<int,class std::mutex>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                 1349.9ms
+        #1          30000             30         1                65.4806ms
+        #2       20000000             20         1                79889.5ms
+        #3         500000            100         1                1341.72ms
+        #4         700000             14         1                1620.77ms
+        #5       40000000              4         1                27565.1ms
+
+Running tests for class concurrent::ds::stacks::LockBasedStack<int,class concurrent::ds::locks::SpinLock>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                405.471ms
+        #1          30000             30         1                70.6805ms
+        #2       20000000             20         1                96362.7ms
+        #3         500000            100         1                1248.06ms
+        #4         700000             14         1                2400.86ms
+        #5       40000000              4         1                5986.59ms
+
+Running tests for class concurrent::ds::stacks::unsafe::AtomicLeakStack<int>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                108.038ms
+        #1          30000             30         1                 4.6456ms
+        #2       20000000             20         1                7206.68ms
+        #3         500000            100         1                131.221ms
+        #4         700000             14         1                191.375ms
+        #5       40000000              4         1                5923.65ms
+
+Running tests for class boost::lockfree::stack<int>...
+  Test num    Ingest size    Threads num   Correct          Execution time
+        #0         800000              8         1                 154.29ms
+        #1          30000             30         1                 6.0745ms
+        #2       20000000             20         1                7567.35ms
+        #3         500000            100         1                118.041ms
+        #4         700000             14         1                163.747ms
+        #5       40000000              4         1                7643.97ms

@@ -1,19 +1,14 @@
 #pragma once
 
 #include <atomic>
-#include <optional>
+#include "Common.h"
 
 namespace concurrent::ds::stacks {
 
 	template <class T>
 	class AtomicReclaimStack {
-		struct Node;
-		using NodePtr = Node*;
-		struct Node {
-			T val;
-			NodePtr next;
-			Node(T val) : val(std::move(val)) {}
-		};
+		using Node = RawNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		std::atomic<unsigned> threads_in_pop;
 		std::atomic<NodePtr> delete_head;
@@ -74,7 +69,7 @@ namespace concurrent::ds::stacks {
 
 			if (!old_head) return std::nullopt;
 
-			std::optional<T> res = std::move(old_head->val);
+			T res = std::move(old_head->val);
 			try_reclaim(old_head);
 			return res;
 		}

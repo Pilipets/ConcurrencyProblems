@@ -46,7 +46,7 @@ namespace concurrent::ds::testing {
 		Pred&& postCondition, DataIngestor get_next_data, size_t produce_n, size_t consume_n, size_t threads_num,
 		ContainerArgs&&... container_args) {
 
-		Container c(std::forward<ContainerArgs>(container_args)...);
+		std::unique_ptr<Container> c = std::make_unique<Container>(std::forward<ContainerArgs>(container_args)...);
 
 		std::vector<std::thread> threads(2 * threads_num);
 		std::mutex mx;
@@ -54,7 +54,7 @@ namespace concurrent::ds::testing {
 		for (size_t i = 0; i < threads_num; ++i) {
 			threads[i] = std::thread([&] {
 				for (size_t j = 0; j < produce_n; ++j) {
-					auto dur = successTimeFuncInvocation<Duration>(std::forward<Produce>(produce), &c, get_next_data());
+					auto dur = successTimeFuncInvocation<Duration>(std::forward<Produce>(produce), c.get(), get_next_data());
 
 					std::scoped_lock<std::mutex> lk(mx);
 					duration += dur;
@@ -63,7 +63,7 @@ namespace concurrent::ds::testing {
 
 			threads[i + threads_num] = std::thread([&] {
 				for (size_t j = 0; j < consume_n; ++j) {
-					auto dur = successTimeFuncInvocation<Duration>(std::forward<Consume>(consume), &c);
+					auto dur = successTimeFuncInvocation<Duration>(std::forward<Consume>(consume), c.get());
 
 					std::scoped_lock<std::mutex> lk(mx);
 					duration += dur;
@@ -74,7 +74,13 @@ namespace concurrent::ds::testing {
 		for (size_t i = 0; i < threads.size(); ++i)
 			threads[i].join();
 
-		return { postCondition(&c), duration };
+		bool res = postCondition(c.get());
+		duration += timeFuncInvocation([&] {
+			c.reset();
+			return true;
+		}).second;
+
+		return { res, duration };
 	}
 
 	template <class Duration, class Container, class Produce, class Consume, class Pred, class DataIngestor, class... Args>
@@ -150,6 +156,7 @@ void testDataStructures() {
 	testing::for_each(testing::TypeList<
 		stacks::AtomicSharedStack<int>,
 		stacks::AtomicReclaimStack<int>,
+		stacks::AtomicRefCountStack<int>,
 		stacks::LockBasedStack<int, std::mutex>,
 		stacks::LockBasedStack<int, locks::SpinLock>,
 		stacks::unsafe::AtomicLeakStack<int>/*,

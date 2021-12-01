@@ -154,7 +154,9 @@
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Stacks\AtomicLeakStack.h" />
     <ClInclude Include="Stacks\AtomicReclaimStack.h" />
+    <ClInclude Include="Stacks\AtomicRefCountStack.h" />
     <ClInclude Include="Stacks\AtomicSharedStack.h" />
+    <ClInclude Include="Stacks\Common.h" />
     <ClInclude Include="Stacks\LockBasedStack.h" />
   </ItemGroup>
   <ItemGroup>

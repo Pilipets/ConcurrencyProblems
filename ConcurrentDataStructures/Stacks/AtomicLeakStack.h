@@ -1,21 +1,16 @@
 #pragma once
 
 #include <atomic>
-#include <optional>
+#include "Common.h"
 
 namespace concurrent::ds::stacks::unsafe {
 
 	template <class T>
 	class AtomicLeakStack {
-		struct Node;
-		using NodePtr = Node*;
-		struct Node {
-			T val;
-			NodePtr next;
-		};
+		using Node = RawNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		std::atomic<NodePtr> head;
-
 		AtomicLeakStack(AtomicLeakStack&) = delete;
 		AtomicLeakStack& operator=(AtomicLeakStack&) = delete;
 
