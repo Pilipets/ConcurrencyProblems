@@ -14,3 +14,4 @@ Used links:
 - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;
 - https://www.bogotobogo.com/cplusplus/files/CplusplusConcurrencyInAction_PracticalMultithreading.pdf;
 - https://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html;
+- https://rigtorp.se/spinlock/;

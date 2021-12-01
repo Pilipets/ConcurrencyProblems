@@ -149,8 +149,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConccurentDS.h" />
+    <ClInclude Include="Locks\SpinLock.h" />
+    <ClInclude Include="Locks\TtasLock.h" />
     <ClInclude Include="Queue.h" />
-    <ClInclude Include="SpinLock.h" />
+    <ClInclude Include="Lock.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Stacks\AtomicLeakStack.h" />
     <ClInclude Include="Stacks\AtomicReclaimStack.h" />

@@ -16,6 +16,9 @@
     <Filter Include="Header Files\Stacks">
       <UniqueIdentifier>{76048983-2ca8-49e2-8e75-48de1f60cfc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Locks">
+      <UniqueIdentifier>{22cbb3c0-1812-4e0f-999a-d978976a08df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stack.h">
@@ -24,7 +27,7 @@
     <ClInclude Include="Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpinLock.h">
+    <ClInclude Include="Lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConccurentDS.h">
@@ -47,6 +50,12 @@
     </ClInclude>
     <ClInclude Include="Stacks\AtomicRefCountStack.h">
       <Filter>Header Files\Stacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Locks\SpinLock.h">
+      <Filter>Header Files\Locks</Filter>
+    </ClInclude>
+    <ClInclude Include="Locks\TtasLock.h">
+      <Filter>Header Files\Locks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
