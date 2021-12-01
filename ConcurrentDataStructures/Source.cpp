@@ -41,12 +41,12 @@ namespace concurrent::ds::testing {
 		}
 	}
 
-	template <class Duration, class Container, class Produce, class Consume, class Pred, class DataIngestor, class... Args>
+	template <class Duration, class Container, class Produce, class Consume, class Pred, class DataIngestor, class... ContainerArgs>
 	std::pair<bool, Duration> testContainerProducerConsumer(Produce&& produce, Consume&& consume,
 		Pred&& postCondition, DataIngestor get_next_data, size_t produce_n, size_t consume_n, size_t threads_num,
-		Args&&... args) {
+		ContainerArgs&&... container_args) {
 
-		Container c(std::forward<Args>(args)...);
+		Container c(std::forward<ContainerArgs>(container_args)...);
 
 		std::vector<std::thread> threads(2 * threads_num);
 		std::mutex mx;
@@ -59,7 +59,6 @@ namespace concurrent::ds::testing {
 					std::scoped_lock<std::mutex> lk(mx);
 					duration += dur;
 				}
-				//executeAddTime(duration, mx, produce_n, std::forward<Produce>(produce), &c, get_next_data());
 			});
 
 			threads[i + threads_num] = std::thread([&] {
@@ -69,7 +68,6 @@ namespace concurrent::ds::testing {
 					std::scoped_lock<std::mutex> lk(mx);
 					duration += dur;
 				}
-				//executeAddTime(duration, mx, consume_n, std::forward<Consume>(consume), &c);
 			});
 		}
 
@@ -141,19 +139,19 @@ void testDataStructures() {
 	using Duration = std::chrono::duration<double, std::ratio<1, 1000>>;
 
 	std::vector<std::array<int, 3>> producers_consumers_setup = {
-		{100000, 100000, 3},
+		{100000, 100000, 4},
 		{1000, 1000, 15},
 		{1000000, 1000000, 10},
 		{5000, 5000, 50},
 		{50000, 50000, 7},
-		{10, 10, 2}
+		{10000000, 10000000, 2}
 	};
 
 	testing::for_each(testing::TypeList<
 		stacks::AtomicSharedStack<int>,
 		stacks::AtomicReclaimStack<int>,
-		stacks::ThreadSafeStack<int, std::mutex>,
-		stacks::ThreadSafeStack<int, locks::SpinLock>,
+		stacks::LockBasedStack<int, std::mutex>,
+		stacks::LockBasedStack<int, locks::SpinLock>,
 		stacks::unsafe::AtomicLeakStack<int>/*,
 		queues::ConcurrentQueue<int>,
 		queues::TwoLockQueue<int>,
