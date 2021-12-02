@@ -14,6 +14,7 @@
 #include <random>
 
 using namespace std;
+using namespace concurrent::ds;
 
 namespace concurrent::ds::testing {
 
@@ -149,39 +150,38 @@ namespace concurrent::ds::testing {
 		generate(res.begin(), res.end(), [&] { return dist(mersenne_engine); });
 		return res;
 	}
+
+	vector<array<size_t, 3>> getDefaultSetupArgs() {
+		return {
+			{100000, 100000, 4},
+			{1000, 1000, 15},
+			{1000000, 1000000, 10},
+			{5000, 5000, 50},
+			{50000, 50000, 7},
+			{10000000, 10000000, 2}
+		};
+	}
+
+	auto getSleepingArgs(const vector<array<size_t, 3>> &setup_args, size_t maxi) {
+		vector<array<vector<size_t>, 2>> sleeping_times(setup_args.size());
+
+		pair<size_t, size_t> sleeping_limits = { 0, maxi };
+		for (size_t i = 0; i < setup_args.size(); ++i) {
+			sleeping_times[i] = {
+				testing::getRandomInts(setup_args[i][0], sleeping_limits),
+				testing::getRandomInts(setup_args[i][1], sleeping_limits)
+			};
+		}
+
+		return std::make_pair(setup_args, sleeping_times);
+	}
 }
 
 #include <boost/lockfree/stack.hpp>
 #include <boost/lockfree/queue.hpp>
 
-void testDataStructures() {
-	using namespace std;
-	using namespace concurrent::ds;
+void testStacks() {
 	using Duration = chrono::duration<double, ratio<1, 1000>>;
-
-	vector<array<size_t, 3>> setup_args = {
-		{100000, 100000, 4},
-		{1000, 1000, 15},
-		{1000000, 1000000, 10},
-		{5000, 5000, 50},
-		{50000, 50000, 7},
-		{10000000, 10000000, 2}
-	};
-	vector<array<vector<size_t>, 2>> sleeping_times;
-
-	/*setup_args = {
-		{100, 100, 2}
-	};
-
-	sleeping_times.resize(setup_args.size());
-
-	pair<size_t, size_t> sleeping_limits = { 0, 10 };
-	for (size_t i = 0; i < setup_args.size(); ++i) {
-		sleeping_times[i] = {
-			testing::getRandomInts(setup_args[i][0], sleeping_limits),
-			testing::getRandomInts(setup_args[i][1], sleeping_limits)
-		};
-	}*/
 
 	testing::for_each(testing::TypeList<
 		stacks::AtomicSharedStack<int>,
@@ -189,13 +189,48 @@ void testDataStructures() {
 		stacks::AtomicRefCountStack<int>,
 		stacks::LockBasedStack<int, mutex>,
 		stacks::LockBasedStack<int, locks::SpinLock>,
-		stacks::unsafe::AtomicLeakStack<int>/*,
+		stacks::unsafe::AtomicLeakStack<int>
+	>{}, [&](auto arg) {
+
+		using Container = decltype(arg)::type;
+
+		testing::getTestResults<Duration, Container>(
+			[&](Container* c, int val) { c->push(val); return true; },
+			[&](Container* c) { return c->pop(); },
+			[&](Container* c) { return c->empty(); },
+			[] { return rand(); },
+			testing::getDefaultSetupArgs(),
+			{},
+			true
+		);
+	});
+
+	testing::for_each(testing::TypeList<boost::lockfree::stack<int>> {}, [&](auto arg) {
+		using Container = decltype(arg)::type;
+
+		testing::getTestResults<Duration, Container>(
+			[&](Container* c, int val) { c->push(val); return true; },
+			[&](Container* c) { int val;  return c->pop(val); },
+			[&](Container* c) { return c->empty(); },
+			[] { return rand(); },
+			testing::getDefaultSetupArgs(),
+			{},
+			true,
+			0
+		);
+	});
+}
+
+void testQueues() {
+	using Duration = chrono::duration<double, ratio<1, 1000>>;
+
+	testing::for_each(testing::TypeList <
 		queues::ConcurrentQueue<int>,
 		queues::TwoLockQueue<int>,
 		queues::TwoLockQueue<int, locks::SpinLock>,
-		queues::ThreadSafeQueue<int>,
+		queues::ThreadSafeQueue<int, std::mutex>,
 		queues::ThreadSafeQueue<int, locks::SpinLock>,
-		queues::unsafe::AtomicQueue<int>*/
+		queues::unsafe::AtomicQueue<int>
 		>
 		{}
 		, [&](auto arg) {
@@ -207,18 +242,13 @@ void testDataStructures() {
 			[&](Container* c) { return c->pop(); },
 			[&](Container* c) { return c->empty(); },
 			[] { return rand(); },
-			setup_args,
-			sleeping_times,
+			testing::getDefaultSetupArgs(),
+			{},
 			true
 		);
 	});
 
-	testing::for_each(testing::TypeList<
-		boost::lockfree::stack<int>/*,
-		boost::lockfree::queue<int>*/
-	>
-		{}
-	, [&](auto arg) {
+	testing::for_each(testing::TypeList<boost::lockfree::queue<int>>{}, [&](auto arg) {
 
 		using Container = decltype(arg)::type;
 
@@ -227,8 +257,8 @@ void testDataStructures() {
 			[&](Container* c) { int val;  return c->pop(val); },
 			[&](Container* c) { return c->empty(); },
 			[] { return rand(); },
-			setup_args,
-			sleeping_times,
+			testing::getDefaultSetupArgs(),
+			{},
 			true,
 			0
 		);
@@ -239,7 +269,8 @@ void testDataStructures() {
 int main() {
 	srand(unsigned(time(nullptr)));
 
-	testDataStructures();
+	testStacks();
+	//testQueues();
 
 	return 0;
 }
