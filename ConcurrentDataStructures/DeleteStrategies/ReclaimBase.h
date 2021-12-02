@@ -17,8 +17,13 @@ namespace concurrent::ds::memory {
 		ReclaimBase() : threads_in_pop(0), delete_head(nullptr) {}
 
 		void chain_pending_nodes(NodePtr first, NodePtr last) {
-			last->next = delete_head;
-			while (!delete_head.compare_exchange_weak(last->next, first));
+			/*last->next = delete_head;
+			while (!delete_head.compare_exchange_weak(last->next, first));*/
+			NodePtr last_next = delete_head;
+			last->next = last_next;
+
+			while (!delete_head.compare_exchange_weak(last_next, first))
+				last->next = last_next;
 		}
 
 		void chain_pending_nodes(NodePtr head) {

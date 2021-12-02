@@ -225,7 +225,7 @@ void testQueues() {
 	using Duration = chrono::duration<double, ratio<1, 1000>>;
 
 	testing::for_each(testing::TypeList <
-		//queues::AtomicReclaimQueue<int>,
+		queues::AtomicReclaimQueue<int>,
 		queues::AtomicSharedQueue<int>,
 		queues::TwoLockQueue<int, std::mutex>,
 		queues::TwoLockQueue<int, locks::SpinLock>,
