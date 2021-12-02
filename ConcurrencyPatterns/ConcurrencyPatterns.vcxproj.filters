@@ -30,6 +30,9 @@
     <ClInclude Include="LightSwitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProducerConsumer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

@@ -146,6 +146,7 @@
     <ClInclude Include="CyclicBarrier.h" />
     <ClInclude Include="LightSwitch.h" />
     <ClInclude Include="Multiplex.h" />
+    <ClInclude Include="ProducerConsumer.h" />
     <ClInclude Include="SignalQueue.h" />
   </ItemGroup>
   <ItemGroup>

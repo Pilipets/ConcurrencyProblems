@@ -11,11 +11,11 @@ namespace concurrent::primitives {
 		std::function<void()> lock_cb, unlock_cb;
 		int cnt = 0;
 
-		LightSwitch(std::function<void()> lock_cb, std::function<void()> unlock_cb):
+	public:
+		LightSwitch(std::function<void()> lock_cb, std::function<void()> unlock_cb) :
 			lock_cb(std::move(lock_cb)), unlock_cb(std::move(unlock_cb)) {
 		}
 
-	public:
 		void lock() {
 			std::lock_guard<std::mutex> lk(mx);
 			if (cnt++ == 0) lock_cb();
@@ -26,4 +26,5 @@ namespace concurrent::primitives {
 			if (--cnt == 0) unlock_cb();
 		}
 	};
+
 }

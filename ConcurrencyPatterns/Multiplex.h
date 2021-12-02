@@ -8,9 +8,9 @@ namespace concurrent::primitives {
 	// no more than n threads can run in the critical section at the same time.
 	template <class Semaphore = std::counting_semaphore<>>
 	class Multiplex {
-
-		// mutex is not possible, cause of thread-owning nature of mutex
+		// mutex is not possible because of thread-owning nature of the mutex.
 		Semaphore sem;
+
 	public:
 		Multiplex(int n) : sem(n) {}
 

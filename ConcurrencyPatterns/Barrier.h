@@ -8,25 +8,9 @@
 
 namespace concurrent::primitives {
 
-	template <class Semaphore = std::binary_semaphore>
+	template <class Semaphore = std::counting_semaphore<>>
 	class Barrier {
 		Semaphore barrier;
-		std::atomic_int cnt;
-
-	public:
-		Barrier(int n) : barrier(0), cnt(n) {}
-		void wait() {
-			if (cnt.fetch_sub(1, std::memory_order_acq_rel) == 1)
-				barrier.release();
-
-			barrier.acquire();
-			barrier.release();
-		}
-	};
-
-	template <>
-	class Barrier <std::counting_semaphore<>> {
-		std::counting_semaphore<> barrier;
 		std::atomic_int cnt;
 		int n;
 
@@ -37,6 +21,22 @@ namespace concurrent::primitives {
 				barrier.release(n);
 
 			barrier.acquire();
+		}
+	};
+
+	template <>
+	class Barrier<std::binary_semaphore> {
+		std::binary_semaphore barrier;
+		std::atomic_int cnt;
+
+	public:
+		Barrier(int n) : barrier(0), cnt(n) {}
+		void wait() {
+			if (cnt.fetch_sub(1, std::memory_order_acq_rel) == 1)
+				barrier.release();
+
+			barrier.acquire();
+			barrier.release();
 		}
 	};
 

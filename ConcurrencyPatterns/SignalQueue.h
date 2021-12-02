@@ -79,4 +79,5 @@ namespace concurrent::primitives {
 			rendezvous.release();
 		}
 	};
+
 }
