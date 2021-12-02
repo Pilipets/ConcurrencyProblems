@@ -225,12 +225,12 @@ void testQueues() {
 	using Duration = chrono::duration<double, ratio<1, 1000>>;
 
 	testing::for_each(testing::TypeList <
-		queues::ConcurrentQueue<int>,
-		queues::TwoLockQueue<int>,
+		queues::AtomicSharedQueue<int>,
+		queues::TwoLockQueue<int, std::mutex>,
 		queues::TwoLockQueue<int, locks::SpinLock>,
-		queues::ThreadSafeQueue<int, std::mutex>,
-		queues::ThreadSafeQueue<int, locks::SpinLock>,
-		queues::unsafe::AtomicQueue<int>
+		queues::LockBasedQueue<int, std::mutex>,
+		queues::LockBasedQueue<int, locks::SpinLock>,
+		queues::unsafe::AtomicLeakQueue<int>
 		>
 		{}
 		, [&](auto arg) {
@@ -249,7 +249,6 @@ void testQueues() {
 	});
 
 	testing::for_each(testing::TypeList<boost::lockfree::queue<int>>{}, [&](auto arg) {
-
 		using Container = decltype(arg)::type;
 
 		testing::getTestResults<Duration, Container>(
@@ -270,7 +269,7 @@ int main() {
 	srand(unsigned(time(nullptr)));
 
 	testStacks();
-	//testQueues();
+	testQueues();
 
 	return 0;
 }

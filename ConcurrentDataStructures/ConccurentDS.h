@@ -13,6 +13,6 @@ namespace concurrent::ds {
 	using spinlock = locks::TtasLock;
 
 	template <class T>
-	using queue = queues::ConcurrentQueue<T>;
+	using queue = queues::AtomicSharedQueue<T>;
 
 }

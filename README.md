@@ -7,8 +7,9 @@ This repository is a solution to the above-described problems and provided for e
 
 TODO:
 - Add concurrent stack implementation using hazard pointers;
+- Add lock-free queue implementation with handling memory leaks;
 - Add more implmentations of the concurrent data structures without memory leaks;
-- Add more common concurrency problems mentioned here - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;
+- Add more common concurrency problems;
 
 Used links:
 - https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf;

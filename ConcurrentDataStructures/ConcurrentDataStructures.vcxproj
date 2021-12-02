@@ -153,6 +153,10 @@
     <ClInclude Include="Locks\TtasLock.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Lock.h" />
+    <ClInclude Include="Queues\AtomicLeakQueue.h" />
+    <ClInclude Include="Queues\AtomicSharedQueue.h" />
+    <ClInclude Include="Queues\LockBasedQueue.h" />
+    <ClInclude Include="Queues\TwoLockQueue.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Stacks\AtomicLeakStack.h" />
     <ClInclude Include="Stacks\AtomicReclaimStack.h" />

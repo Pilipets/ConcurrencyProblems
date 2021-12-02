@@ -19,6 +19,9 @@
     <Filter Include="Header Files\Locks">
       <UniqueIdentifier>{22cbb3c0-1812-4e0f-999a-d978976a08df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Queues">
+      <UniqueIdentifier>{d69f72d2-608f-4904-8535-759c09d08800}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stack.h">
@@ -56,6 +59,18 @@
     </ClInclude>
     <ClInclude Include="Locks\TtasLock.h">
       <Filter>Header Files\Locks</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\AtomicLeakQueue.h">
+      <Filter>Header Files\Queues</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\AtomicSharedQueue.h">
+      <Filter>Header Files\Queues</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\TwoLockQueue.h">
+      <Filter>Header Files\Queues</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\LockBasedQueue.h">
+      <Filter>Header Files\Queues</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
