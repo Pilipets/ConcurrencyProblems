@@ -2,19 +2,14 @@
 
 #include <atomic>
 #include <optional>
+#include "QeueuNode.h"
 
 namespace concurrent::ds::queues::unsafe {
 
 	template <class T>
 	class AtomicLeakQueue {
-		struct Node;
-		using NodePtr = Node*;
-		struct Node {
-			T val;
-			std::atomic<NodePtr> next;
-
-			Node(T val = T()) : val(std::move(val)), next{} {}
-		};
+		using Node = AtomicRawNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		AtomicLeakQueue(AtomicLeakQueue&) = delete;
 		AtomicLeakQueue& operator=(AtomicLeakQueue&) = delete;
@@ -26,7 +21,7 @@ namespace concurrent::ds::queues::unsafe {
 		~AtomicLeakQueue() { delete head; }
 
 		void push(T val) {
-			std::atomic<NodePtr> new_node = new Node(std::move(val));
+			NodePtr new_node = new Node(std::move(val));
 
 			while (true) {
 				NodePtr old_tail = tail.load(), dummy{};

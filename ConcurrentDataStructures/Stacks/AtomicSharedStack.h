@@ -3,6 +3,7 @@
 #include <atomic>
 #include <memory>
 #include <optional>
+#include "StackNode.h"
 
 namespace concurrent::ds::stacks {
 

@@ -3,17 +3,14 @@
 #include <queue>
 #include <mutex>
 #include <optional>
+#include "QeueuNode.h"
 
 namespace concurrent::ds::queues {
 
 	template <class T, class LockType = std::mutex>
 	class TwoLockQueue {
-		struct Node {
-			T val;
-			Node* next = nullptr;
-
-			Node(T val = T()) : val(std::move(val)) {}
-		};
+		using Node = RawNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		mutable LockType head_mx, tail_mx;
 		Node* head, * tail;

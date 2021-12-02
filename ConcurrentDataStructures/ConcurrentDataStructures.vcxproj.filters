@@ -22,6 +22,9 @@
     <Filter Include="Header Files\Queues">
       <UniqueIdentifier>{d69f72d2-608f-4904-8535-759c09d08800}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DeleteStategies">
+      <UniqueIdentifier>{bf16120b-098d-498e-a3cb-15d1c387fc30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stack.h">
@@ -48,9 +51,6 @@
     <ClInclude Include="Stacks\LockBasedStack.h">
       <Filter>Header Files\Stacks</Filter>
     </ClInclude>
-    <ClInclude Include="Stacks\Common.h">
-      <Filter>Header Files\Stacks</Filter>
-    </ClInclude>
     <ClInclude Include="Stacks\AtomicRefCountStack.h">
       <Filter>Header Files\Stacks</Filter>
     </ClInclude>
@@ -70,6 +70,18 @@
       <Filter>Header Files\Queues</Filter>
     </ClInclude>
     <ClInclude Include="Queues\LockBasedQueue.h">
+      <Filter>Header Files\Queues</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteStrategies\ReclaimBase.h">
+      <Filter>Header Files\DeleteStategies</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\AtomicReclaimQueue.h">
+      <Filter>Header Files\Queues</Filter>
+    </ClInclude>
+    <ClInclude Include="Stacks\StackNode.h">
+      <Filter>Header Files\Stacks</Filter>
+    </ClInclude>
+    <ClInclude Include="Queues\QeueuNode.h">
       <Filter>Header Files\Queues</Filter>
     </ClInclude>
   </ItemGroup>

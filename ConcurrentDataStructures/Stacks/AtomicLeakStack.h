@@ -1,7 +1,7 @@
 #pragma once
 
 #include <atomic>
-#include "Common.h"
+#include "StackNode.h"
 
 namespace concurrent::ds::stacks::unsafe {
 

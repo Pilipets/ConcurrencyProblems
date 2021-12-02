@@ -149,21 +149,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConccurentDS.h" />
+    <ClInclude Include="DeleteStrategies\ReclaimBase.h" />
     <ClInclude Include="Locks\SpinLock.h" />
     <ClInclude Include="Locks\TtasLock.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Lock.h" />
     <ClInclude Include="Queues\AtomicLeakQueue.h" />
+    <ClInclude Include="Queues\AtomicReclaimQueue.h" />
     <ClInclude Include="Queues\AtomicSharedQueue.h" />
     <ClInclude Include="Queues\LockBasedQueue.h" />
+    <ClInclude Include="Queues\QeueuNode.h" />
     <ClInclude Include="Queues\TwoLockQueue.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Stacks\AtomicLeakStack.h" />
     <ClInclude Include="Stacks\AtomicReclaimStack.h" />
     <ClInclude Include="Stacks\AtomicRefCountStack.h" />
     <ClInclude Include="Stacks\AtomicSharedStack.h" />
-    <ClInclude Include="Stacks\Common.h" />
     <ClInclude Include="Stacks\LockBasedStack.h" />
+    <ClInclude Include="Stacks\StackNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

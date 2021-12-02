@@ -1,21 +1,14 @@
 #pragma once
 
-#include <atomic>
-#include <memory>
 #include <optional>
+#include "QeueuNode.h"
 
 namespace concurrent::ds::queues {
 
 	template <class T>
 	class AtomicSharedQueue {
-		struct Node;
-		using NodePtr = std::shared_ptr<Node>;
-		struct Node {
-			T val;
-			std::atomic<NodePtr> next;
-
-			Node(T val = T()) : val(std::move(val)), next{} {}
-		};
+		using Node = AtomicSharedNode<T>;
+		using NodePtr = Node::NodePtr;
 
 		AtomicSharedQueue(AtomicSharedQueue&) = delete;
 		AtomicSharedQueue& operator=(AtomicSharedQueue&) = delete;
@@ -27,7 +20,7 @@ namespace concurrent::ds::queues {
 		~AtomicSharedQueue() = default;
 
 		void push(T val) {
-			std::atomic<NodePtr> new_node = std::make_shared<Node>(std::move(val));
+			NodePtr new_node = std::make_shared<Node>(std::move(val));
 
 			while (true) {
 				NodePtr old_tail = tail.load(), dummy{};
