@@ -5,7 +5,7 @@
 #include <queue>
 #include <condition_variable>
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	template <class Event, class Queue = std::queue<Event>, class Notifier = std::counting_semaphore<>>
 	class FiniteProducerConsumer;

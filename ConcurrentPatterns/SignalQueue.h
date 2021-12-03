@@ -4,7 +4,7 @@
 #include <mutex>
 #include <functional>
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	/*
 	When a leader arrives, it checks to see if there is a follower waiting.

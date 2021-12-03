@@ -22,9 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{8303246e-0c63-41e8-81b1-a78c3aca29ef}</ProjectGuid>
-    <RootNamespace>ConcurrencyPaterns</RootNamespace>
+    <RootNamespace>ConcurrentPatterns</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>ConcurrencyPatterns</ProjectName>
+    <ProjectName>ConcurrentPatterns</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,6 +147,7 @@
     <ClInclude Include="FiniteProducerConsumer.h" />
     <ClInclude Include="LightSwitch.h" />
     <ClInclude Include="Multiplex.h" />
+    <ClInclude Include="NoStarveMutex.h" />
     <ClInclude Include="ProducerConsumer.h" />
     <ClInclude Include="SignalQueue.h" />
   </ItemGroup>

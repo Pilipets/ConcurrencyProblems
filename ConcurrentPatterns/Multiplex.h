@@ -2,7 +2,7 @@
 
 #include <semaphore>
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	// Multiplex concurrency patttern:
 	// no more than n threads can run in the critical section at the same time.

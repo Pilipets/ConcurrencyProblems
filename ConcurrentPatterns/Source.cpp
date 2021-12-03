@@ -5,11 +5,13 @@
 #include "ProducerConsumer.h"
 #include "FiniteProducerConsumer.h"
 #include "SignalQueue.h"
+#include "NoStarveMutex.h"
+
 #include <latch>
 #include <barrier>
 
 int main() {
-	using namespace concurrent::primitives;
+	using namespace concurrent::patterns;
 
 	const int threads_num = 5;
 	Barrier b1(threads_num);
@@ -33,6 +35,8 @@ int main() {
 
 	SignalQueue q1;
 	ExclusiveSignalQueue q2;
+
+	NoStarveMutex mx;
 
 	return 0;
 }

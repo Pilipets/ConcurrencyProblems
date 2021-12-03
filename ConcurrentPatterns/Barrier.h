@@ -6,7 +6,7 @@
 // You are free to use std::barrier, std::latch, however
 // it can be achieved using semaphores.
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	template <class Semaphore = std::counting_semaphore<>>
 	class Barrier {

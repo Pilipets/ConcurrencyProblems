@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{f731dd79-4d20-4c83-b0ce-e5aa4b5b15e7}</ProjectGuid>
-    <RootNamespace>LockFree</RootNamespace>
+    <RootNamespace>ConcurrentDataStructures</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>ConcurrentDataStructures</ProjectName>
   </PropertyGroup>

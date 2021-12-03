@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Temp", "Temp\Temp.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrencyProblems", "ConcurrencyProblems\ConcurrencyProblems.vcxproj", "{DFE338A1-2DB7-423A-9475-6F0F771D98CB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrencyPatterns", "ConcurrencyPatterns\ConcurrencyPatterns.vcxproj", "{8303246E-0C63-41E8-81B1-A78C3ACA29EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrentPatterns", "ConcurrentPatterns\ConcurrentPatterns.vcxproj", "{8303246E-0C63-41E8-81B1-A78C3ACA29EF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConcurrentDataStructures", "ConcurrentDataStructures\ConcurrentDataStructures.vcxproj", "{F731DD79-4D20-4C83-B0CE-E5AA4B5B15E7}"
 EndProject

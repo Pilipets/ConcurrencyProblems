@@ -3,7 +3,7 @@
 #include <semaphore>
 #include <mutex>
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	// Two-phase barrier
 	template<class Semaphore = std::counting_semaphore<>>

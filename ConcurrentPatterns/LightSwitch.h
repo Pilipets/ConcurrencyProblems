@@ -3,7 +3,7 @@
 #include <mutex>
 #include <functional>
 
-namespace concurrent::primitives {
+namespace concurrent::patterns {
 
 	// The first thread into a section locks a semaphore(or queues) and the last one out unlocks it.
 	class LightSwitch {
