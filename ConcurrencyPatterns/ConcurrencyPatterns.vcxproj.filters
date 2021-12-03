@@ -33,6 +33,9 @@
     <ClInclude Include="ProducerConsumer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FiniteProducerConsumer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

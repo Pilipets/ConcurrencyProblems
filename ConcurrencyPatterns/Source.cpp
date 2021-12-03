@@ -3,6 +3,7 @@
 #include "LightSwitch.h"
 #include "Multiplex.h"
 #include "ProducerConsumer.h"
+#include "FiniteProducerConsumer.h"
 #include "SignalQueue.h"
 #include <latch>
 #include <barrier>
@@ -25,6 +26,10 @@ int main() {
 
 	ProducerConsumer<int> pc1;
 	ProducerConsumer<int, std::condition_variable> pc2;
+
+	const int buffer_size = 30;
+	FiniteProducerConsumer<int> pc3(buffer_size);
+	FiniteProducerConsumer<int, std::queue<int>, std::condition_variable> pc4(buffer_size);
 
 	SignalQueue q1;
 	ExclusiveSignalQueue q2;

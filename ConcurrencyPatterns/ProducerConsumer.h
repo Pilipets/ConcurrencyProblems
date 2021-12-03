@@ -45,11 +45,11 @@ namespace concurrent::primitives {
 
 	public:
 		void produce(Event event) {
-			{
-				std::scoped_lock<std::mutex> lk(mx);
-				events.push(std::move(event));
-			}
-			item_added.notify_one();
+			std::scoped_lock<std::mutex> lk(mx);
+			events.push(std::move(event));
+			
+			if (events.size() == 1)
+				item_added.notify_one();
 		}
 
 		Event consume() {
