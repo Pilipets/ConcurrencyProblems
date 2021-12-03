@@ -2,8 +2,8 @@ Recently, I encountered a problem with finding easy-to-use and easy-to-understan
 
 This repository is a solution to the above-described problems:
 - Atomic/Lock-free/Concurrent data-structures: stacks, queues, spinlocks;
-- Concurrency patterns: Multiplex, Barrier, SignalQueue, LightSwitch, ProducerConsumer;
 - Performance tests of different thread-safe data structures implementations;
+- ConcurrentPatterns: Multiplex, Barrier, SignalQueue, LightSwitch, ProducerConsumer, Double-checked locking;
 
 I'm not claiming that implementations here are the most efficient ones since they are provided for educational purposes.
 
@@ -18,3 +18,4 @@ Used materials:
 - [The Little Book of Semaphores by Allen B. Downey](https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf);
 - https://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html;
 - https://rigtorp.se/spinlock/;
+- [Concurrency pattern wiki](https://en.wikipedia.org/wiki/Concurrency_pattern);

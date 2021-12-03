@@ -4,7 +4,7 @@
 #include "Stack.h"
 #include "Lock.h"
 
-// This is the most reliable options
+// Here are the most efficient options
 namespace concurrent::ds {
 
 	template <class T>
@@ -13,6 +13,6 @@ namespace concurrent::ds {
 	using spinlock = locks::TtasLock;
 
 	template <class T>
-	using queue = queues::AtomicSharedQueue<T>;
+	using queue = queues::AtomicReclaimQueue<T>;
 
 }

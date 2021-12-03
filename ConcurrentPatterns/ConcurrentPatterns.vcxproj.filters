@@ -39,6 +39,9 @@
     <ClInclude Include="NoStarveMutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DoubleCheckedLocking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">

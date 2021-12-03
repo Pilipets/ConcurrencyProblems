@@ -6,6 +6,7 @@
 #include "FiniteProducerConsumer.h"
 #include "SignalQueue.h"
 #include "NoStarveMutex.h"
+#include "DoubleCheckedLocking.h"
 
 #include <latch>
 #include <barrier>
@@ -37,6 +38,10 @@ int main() {
 	ExclusiveSignalQueue q2;
 
 	NoStarveMutex mx;
+
+	DoubleCheckSingleton::GetInstance();
+	MeyersSingleton::GetInstance();
+	CallOnceSingleton::GetInstance();
 
 	return 0;
 }
