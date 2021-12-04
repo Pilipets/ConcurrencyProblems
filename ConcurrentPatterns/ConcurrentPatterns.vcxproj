@@ -150,6 +150,7 @@
     <ClInclude Include="Multiplex.h" />
     <ClInclude Include="NoStarveMutex.h" />
     <ClInclude Include="ProducerConsumer.h" />
+    <ClInclude Include="ReadersWriters.h" />
     <ClInclude Include="SignalQueue.h" />
   </ItemGroup>
   <ItemGroup>

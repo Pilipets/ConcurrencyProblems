@@ -7,6 +7,7 @@
 #include "SignalQueue.h"
 #include "NoStarveMutex.h"
 #include "DoubleCheckedLocking.h"
+#include "ReadersWriters.h"
 
 #include <latch>
 #include <barrier>
@@ -42,6 +43,10 @@ int main() {
 	DoubleCheckSingleton::GetInstance();
 	MeyersSingleton::GetInstance();
 	CallOnceSingleton::GetInstance();
+
+	ReadersWritersR lock;
+	ReadersWriters lock2;
+	ReadersWritersW lock3;
 
 	return 0;
 }
