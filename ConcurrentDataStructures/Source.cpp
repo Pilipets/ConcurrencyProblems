@@ -190,14 +190,14 @@ void testStacks() {
 		stacks::LockBasedStack<int, mutex>,
 		stacks::LockBasedStack<int, locks::SpinLock>,
 		stacks::unsafe::AtomicLeakStack<int>
-	>{}, [&](auto arg) {
+	>{}, [](auto arg) {
 
 		using Container = decltype(arg)::type;
 
 		testing::getTestResults<Duration, Container>(
-			[&](Container* c, int val) { c->push(val); return true; },
-			[&](Container* c) { return c->pop(); },
-			[&](Container* c) { return c->empty(); },
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { return c->pop(); },
+			[](Container* c) { return c->empty(); },
 			[] { return rand(); },
 			testing::getDefaultSetupArgs(),
 			{},
@@ -205,13 +205,13 @@ void testStacks() {
 		);
 	});
 
-	testing::for_each(testing::TypeList<boost::lockfree::stack<int>> {}, [&](auto arg) {
+	testing::for_each(testing::TypeList<boost::lockfree::stack<int>> {}, [](auto arg) {
 		using Container = decltype(arg)::type;
 
 		testing::getTestResults<Duration, Container>(
-			[&](Container* c, int val) { c->push(val); return true; },
-			[&](Container* c) { int val;  return c->pop(val); },
-			[&](Container* c) { return c->empty(); },
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { int val;  return c->pop(val); },
+			[](Container* c) { return c->empty(); },
 			[] { return rand(); },
 			testing::getDefaultSetupArgs(),
 			{},
@@ -227,21 +227,21 @@ void testQueues() {
 	testing::for_each(testing::TypeList <
 		queues::AtomicReclaimQueue<int>,
 		queues::AtomicSharedQueue<int>,
-		queues::TwoLockQueue<int, std::mutex>,
-		queues::TwoLockQueue<int, locks::SpinLock>,
+		queues::AtomicTwoLockQueue<int, std::mutex>,
+		queues::AtomicTwoLockQueue<int, locks::SpinLock>,
 		queues::LockBasedQueue<int, std::mutex>,
 		queues::LockBasedQueue<int, locks::SpinLock>,
 		queues::unsafe::AtomicLeakQueue<int>
 		>
 		{}
-		, [&](auto arg) {
+		, [](auto arg) {
 
 		using Container = decltype(arg)::type;
 
 		testing::getTestResults<Duration, Container>(
-			[&](Container* c, int val) { c->push(val); return true; },
-			[&](Container* c) { return c->pop(); },
-			[&](Container* c) { return c->empty(); },
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { return c->pop(); },
+			[](Container* c) { return c->empty(); },
 			[] { return rand(); },
 			testing::getDefaultSetupArgs(),
 			{},
@@ -249,13 +249,13 @@ void testQueues() {
 		);
 	});
 
-	testing::for_each(testing::TypeList<boost::lockfree::queue<int>>{}, [&](auto arg) {
+	testing::for_each(testing::TypeList<boost::lockfree::queue<int>>{}, [](auto arg) {
 		using Container = decltype(arg)::type;
 
 		testing::getTestResults<Duration, Container>(
-			[&](Container* c, int val) { c->push(val); return true; },
-			[&](Container* c) { int val;  return c->pop(val); },
-			[&](Container* c) { return c->empty(); },
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { int val;  return c->pop(val); },
+			[](Container* c) { return c->empty(); },
 			[] { return rand(); },
 			testing::getDefaultSetupArgs(),
 			{},

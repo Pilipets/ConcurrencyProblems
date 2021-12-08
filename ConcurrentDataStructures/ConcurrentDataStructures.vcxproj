@@ -159,7 +159,7 @@
     <ClInclude Include="Queues\AtomicSharedQueue.h" />
     <ClInclude Include="Queues\LockBasedQueue.h" />
     <ClInclude Include="Queues\QeueuNode.h" />
-    <ClInclude Include="Queues\TwoLockQueue.h" />
+    <ClInclude Include="Queues\AtomicTwoLockQueue.h" />
     <ClInclude Include="Stack.h" />
     <ClInclude Include="Stacks\AtomicLeakStack.h" />
     <ClInclude Include="Stacks\AtomicReclaimStack.h" />

@@ -1,71 +1,71 @@
 Running tests for class concurrent::ds::queues::AtomicReclaimQueue<int>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                134.748ms
-        #1          30000             30         1                 6.9705ms
-        #2       20000000             20         1                7810.97ms
-        #3         500000            100         1                324.685ms
-        #4         700000             14         1                183.686ms
-        #5       40000000              4         1                7433.26ms
+        #0         800000              8         1                136.755ms
+        #1          30000             30         1                11.1871ms
+        #2       20000000             20         1                7580.27ms
+        #3         500000            100         1                182.642ms
+        #4         700000             14         1                229.167ms
+        #5       40000000              4         1                 6425.6ms
 
 Running tests for class concurrent::ds::queues::AtomicSharedQueue<int>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                5844.56ms
-        #1          30000             30         1                222.758ms
-        #2       20000000             20         1                 384803ms
-        #3         500000            100         1                6616.85ms
-        #4         700000             14         1                9561.34ms
-        #5       40000000              4         1                86692.5ms
+        #0         800000              8         1                5617.24ms
+        #1          30000             30         1                282.529ms
+        #2       20000000             20         1                 441373ms
+        #3         500000            100         1                7229.85ms
+        #4         700000             14         1                 8227.8ms
+        #5       40000000              4         1                86041.6ms
 
-Running tests for class concurrent::ds::queues::TwoLockQueue<int,class std::mutex>...
+Running tests for class concurrent::ds::queues::AtomicTwoLockQueue<int,class std::mutex>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                301.091ms
-        #1          30000             30         1                12.7879ms
-        #2       20000000             20         1                27467.7ms
-        #3         500000            100         1                1308.17ms
-        #4         700000             14         1                349.834ms
-        #5       40000000              4         1                10542.8ms
+        #0         800000              8         1                446.036ms
+        #1          30000             30         1                22.9607ms
+        #2       20000000             20         1                41599.2ms
+        #3         500000            100         1                308.577ms
+        #4         700000             14         1                646.346ms
+        #5       40000000              4         1                13733.3ms
 
-Running tests for class concurrent::ds::queues::TwoLockQueue<int,class concurrent::ds::locks::SpinLock>...
+Running tests for class concurrent::ds::queues::AtomicTwoLockQueue<int,class concurrent::ds::locks::SpinLock>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                159.249ms
-        #1          30000             30         1                 7.2771ms
-        #2       20000000             20         1                22631.8ms
-        #3         500000            100         1                128.455ms
-        #4         700000             14         1                141.277ms
-        #5       40000000              4         1                6940.44ms
+        #0         800000              8         1                172.866ms
+        #1          30000             30         1                11.8759ms
+        #2       20000000             20         1                  36560ms
+        #3         500000            100         1                1617.58ms
+        #4         700000             14         1                340.251ms
+        #5       40000000              4         1                7985.64ms
 
 Running tests for class concurrent::ds::queues::LockBasedQueue<int,class std::mutex>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                1225.61ms
-        #1          30000             30         1                47.8626ms
-        #2       20000000             20         1                65013.7ms
-        #3         500000            100         1                1696.02ms
-        #4         700000             14         1                1619.93ms
-        #5       40000000              4         1                23711.4ms
+        #0         800000              8         1                1157.76ms
+        #1          30000             30         1                44.8289ms
+        #2       20000000             20         1                73057.9ms
+        #3         500000            100         1                1086.59ms
+        #4         700000             14         1                   1283ms
+        #5       40000000              4         1                24104.6ms
 
 Running tests for class concurrent::ds::queues::LockBasedQueue<int,class concurrent::ds::locks::SpinLock>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                165.781ms
-        #1          30000             30         1                16.9564ms
-        #2       20000000             20         1                27923.8ms
-        #3         500000            100         1                444.598ms
-        #4         700000             14         1                656.014ms
-        #5       40000000              4         1                4133.49ms
+        #0         800000              8         1                151.432ms
+        #1          30000             30         1                11.3991ms
+        #2       20000000             20         1                60421.1ms
+        #3         500000            100         1                354.004ms
+        #4         700000             14         1                1894.06ms
+        #5       40000000              4         1                3790.17ms
 
 Running tests for class concurrent::ds::queues::unsafe::AtomicLeakQueue<int>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                102.685ms
-        #1          30000             30         1                 4.0927ms
-        #2       20000000             20         1                6146.58ms
-        #3         500000            100         1                94.6194ms
-        #4         700000             14         1                188.753ms
-        #5       40000000              4         1                5671.67ms
+        #0         800000              8         1                131.841ms
+        #1          30000             30         1                 7.0162ms
+        #2       20000000             20         1                6711.57ms
+        #3         500000            100         1                87.1946ms
+        #4         700000             14         1                168.609ms
+        #5       40000000              4         1                6240.22ms
 
 Running tests for class boost::lockfree::queue<int>...
   Test num    Ingest size    Threads num   Correct          Execution time
-        #0         800000              8         1                169.433ms
-        #1          30000             30         1                 7.7108ms
-        #2       20000000             20         1                10575.8ms
-        #3         500000            100         1                261.222ms
-        #4         700000             14         1                231.527ms
-        #5       40000000              4         1                8176.75ms
+        #0         800000              8         1                171.303ms
+        #1          30000             30         1                 7.4097ms
+        #2       20000000             20         1                10152.5ms
+        #3         500000            100         1                128.409ms
+        #4         700000             14         1                188.071ms
+        #5       40000000              4         1                9351.35ms

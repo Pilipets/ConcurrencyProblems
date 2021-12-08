@@ -66,7 +66,7 @@
     <ClInclude Include="Queues\AtomicSharedQueue.h">
       <Filter>Header Files\Queues</Filter>
     </ClInclude>
-    <ClInclude Include="Queues\TwoLockQueue.h">
+    <ClInclude Include="Queues\AtomicTwoLockQueue.h">
       <Filter>Header Files\Queues</Filter>
     </ClInclude>
     <ClInclude Include="Queues\LockBasedQueue.h">
