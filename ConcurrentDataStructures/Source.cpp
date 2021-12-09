@@ -18,18 +18,18 @@ using namespace concurrent::ds;
 
 namespace concurrent::ds::testing {
 
-	template <class Func, class... Args>
-	auto timeFuncInvocation(Func&& func, Args&&... args) {
-		auto start = chrono::high_resolution_clock::now();
-		invoke_result_t<Func, Args...> res = invoke(forward<Func>(func), forward<Args>(args)...);
-		auto stop = chrono::high_resolution_clock::now();
+	template <class Clock, class Func, class... Args>
+	auto funcMeasureTime(Clock timer, Func&& func, Args&&... args) {
+		auto start = timer();
+		auto res = invoke(forward<Func>(func), forward<Args>(args)...);
+		auto stop = timer();
 		return make_pair(move(res), stop - start);
 	};
 
-	template <class Duration, class Func, class... Args>
-	auto successTimeFuncInvocation(Func&& func, Args&&... args) {
+	template <class Duration, class Clock, class Func, class... Args>
+	auto successFuncMeasureTime(Clock timer, Func&& func, Args&&... args) {
 		while (true) {
-			auto res = timeFuncInvocation(forward<Func>(func), forward<Args>(args)...);
+			auto res = funcMeasureTime(timer, forward<Func>(func), forward<Args>(args)...);
 			if (res.first) return Duration(res.second);
 		}
 		return Duration{};
@@ -45,10 +45,10 @@ namespace concurrent::ds::testing {
 		duration += dur;
 	}
 
-	template <class Duration, class Container, class Produce, class Consume, class Pred, class DataIngestor, class... ContainerArgs>
-	pair<bool, Duration> testContainerProducerConsumer(Produce&& produce, Consume&& consume,
-		Pred&& postCondition, DataIngestor get_next_data, array<size_t, 3> setup_arg,
-		array<vector<size_t>, 2> sleeping_time,
+	template <class Duration, class Container, class Clock, class Produce, class Consume, class Pred, class DataIngestor, class... ContainerArgs>
+	pair<bool, Duration> testContainerProducerConsumer(Clock timer, Produce&& produce, Consume&& consume,
+		Pred&& postCondition, DataIngestor get_next_data, const array<size_t, 3> &setup_arg,
+		const array<vector<size_t>, 2> &sleeping_time,
 		ContainerArgs&&... container_args) {
 
 		auto [produce_n, consume_n, threads_num] = setup_arg;
@@ -61,7 +61,7 @@ namespace concurrent::ds::testing {
 		for (size_t i = 0; i < threads_num; ++i) {
 			threads[i] = thread([&] {
 				for (size_t j = 0; j < produce_n; ++j) {
-					auto dur = successTimeFuncInvocation<Duration>(forward<Produce>(produce), c.get(), get_next_data());
+					auto dur = successFuncMeasureTime<Duration>(timer, forward<Produce>(produce), c.get(), get_next_data());
 
 					sleepAddDuration(j, sleeping_time[0], duration, dur, mx);
 				}
@@ -69,7 +69,7 @@ namespace concurrent::ds::testing {
 
 			threads[i + threads_num] = thread([&] {
 				for (size_t j = 0; j < consume_n; ++j) {
-					auto dur = successTimeFuncInvocation<Duration>(forward<Consume>(consume), c.get());
+					auto dur = successFuncMeasureTime<Duration>(timer, forward<Consume>(consume), c.get());
 
 					sleepAddDuration(j, sleeping_time[1], duration, dur, mx);
 				}
@@ -80,7 +80,7 @@ namespace concurrent::ds::testing {
 			threads[i].join();
 
 		bool res = postCondition(c.get());
-		duration += timeFuncInvocation([&] {
+		duration += funcMeasureTime(timer, [&] {
 			c.reset();
 			return true;
 		}).second;
@@ -88,11 +88,11 @@ namespace concurrent::ds::testing {
 		return { res, duration };
 	}
 
-	template <class Duration, class Container, class Produce, class Consume, class Pred, class DataIngestor, class... Args>
-	vector<pair<bool, Duration>> getTestResults(Produce&& produce, Consume&& consume,
-		Pred&& pred, DataIngestor&& get_next_data, vector<array<size_t, 3>> setup_args,
+	template <class Duration, class Container, class Clock, class Produce, class Consume, class Pred, class DataIngestor, class... ContainerArgs>
+	vector<pair<bool, Duration>> getTestResults(Clock timer, Produce&& produce, Consume&& consume,
+		Pred&& pred, DataIngestor&& get_next_data, const vector<array<size_t, 3>> &setup_args,
 		vector<array<vector<size_t>, 2>> sleeping_times,
-		bool verbose, Args&&... args) {
+		bool verbose, ContainerArgs&&... containerArgs) {
 
 		vector<pair<bool, Duration>> res(setup_args.size());
 
@@ -102,13 +102,14 @@ namespace concurrent::ds::testing {
 
 		for (size_t i = 0; i < res.size(); ++i) {
 			res[i] = testContainerProducerConsumer<Duration, Container>(
+				timer,
 				forward<Produce>(produce),
 				forward<Consume>(consume),
 				forward<Pred>(pred),
 				forward<DataIngestor>(get_next_data),
 				setup_args[i],
 				sleeping_times.empty() ? array<vector<size_t>, 2>() : sleeping_times[i],
-				forward<Args>(args)...
+				forward<ContainerArgs>(containerArgs)...
 			);
 		}
 
@@ -151,6 +152,26 @@ namespace concurrent::ds::testing {
 		return res;
 	}
 
+	vector<array<vector<size_t>, 2>> getSleepingArgs(const vector<array<size_t, 3>> &setup_args, size_t maxi) {
+		vector<array<vector<size_t>, 2>> sleeping_times(setup_args.size());
+
+		pair<size_t, size_t> sleeping_limits = { 0, maxi };
+		for (size_t i = 0; i < setup_args.size(); ++i) {
+			sleeping_times[i] = {
+				testing::getRandomInts(setup_args[i][0], sleeping_limits),
+				testing::getRandomInts(setup_args[i][1], sleeping_limits)
+			};
+		}
+
+		return sleeping_times;
+	}
+}
+
+#include <boost/lockfree/stack.hpp>
+#include <boost/lockfree/queue.hpp>
+
+namespace {
+
 	vector<array<size_t, 3>> getDefaultSetupArgs() {
 		return {
 			{100000, 100000, 4},
@@ -162,23 +183,40 @@ namespace concurrent::ds::testing {
 		};
 	}
 
-	auto getSleepingArgs(const vector<array<size_t, 3>> &setup_args, size_t maxi) {
-		vector<array<vector<size_t>, 2>> sleeping_times(setup_args.size());
+	template <class Duration>
+	auto defaultCustomProducerConsumer = [](auto arg) {
+		using Container = decltype(arg)::type;
 
-		pair<size_t, size_t> sleeping_limits = { 0, maxi };
-		for (size_t i = 0; i < setup_args.size(); ++i) {
-			sleeping_times[i] = {
-				testing::getRandomInts(setup_args[i][0], sleeping_limits),
-				testing::getRandomInts(setup_args[i][1], sleeping_limits)
-			};
-		}
+		testing::getTestResults<Duration, Container>(
+			std::chrono::high_resolution_clock::now,
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { return c->pop(); },
+			[](Container* c) { return c->empty(); },
+			[] { return rand(); },
+			getDefaultSetupArgs(),
+			{},
+			true
+		);
+	};
 
-		return std::make_pair(setup_args, sleeping_times);
-	}
+	template <class Duration>
+	auto defaultBoostProducerConsumer = [](auto arg) {
+		using Container = decltype(arg)::type;
+
+		testing::getTestResults<Duration, Container>(
+			std::chrono::high_resolution_clock::now,
+			[](Container* c, int val) { c->push(val); return true; },
+			[](Container* c) { int val;  return c->pop(val); },
+			[](Container* c) { return c->empty(); },
+			[] { return rand(); },
+			getDefaultSetupArgs(),
+			{},
+			true,
+			0
+		);
+	};
+
 }
-
-#include <boost/lockfree/stack.hpp>
-#include <boost/lockfree/queue.hpp>
 
 void testStacks() {
 	using Duration = chrono::duration<double, ratio<1, 1000>>;
@@ -190,35 +228,10 @@ void testStacks() {
 		stacks::LockBasedStack<int, mutex>,
 		stacks::LockBasedStack<int, locks::SpinLock>,
 		stacks::unsafe::AtomicLeakStack<int>
-	>{}, [](auto arg) {
+	>{}, defaultCustomProducerConsumer<Duration>);
 
-		using Container = decltype(arg)::type;
-
-		testing::getTestResults<Duration, Container>(
-			[](Container* c, int val) { c->push(val); return true; },
-			[](Container* c) { return c->pop(); },
-			[](Container* c) { return c->empty(); },
-			[] { return rand(); },
-			testing::getDefaultSetupArgs(),
-			{},
-			true
-		);
-	});
-
-	testing::for_each(testing::TypeList<boost::lockfree::stack<int>> {}, [](auto arg) {
-		using Container = decltype(arg)::type;
-
-		testing::getTestResults<Duration, Container>(
-			[](Container* c, int val) { c->push(val); return true; },
-			[](Container* c) { int val;  return c->pop(val); },
-			[](Container* c) { return c->empty(); },
-			[] { return rand(); },
-			testing::getDefaultSetupArgs(),
-			{},
-			true,
-			0
-		);
-	});
+	testing::for_each(testing::TypeList<boost::lockfree::stack<int>
+	>{}, defaultBoostProducerConsumer<Duration>);
 }
 
 void testQueues() {
@@ -232,38 +245,10 @@ void testQueues() {
 		queues::LockBasedQueue<int, std::mutex>,
 		queues::LockBasedQueue<int, locks::SpinLock>,
 		queues::unsafe::AtomicLeakQueue<int>
-		>
-		{}
-		, [](auto arg) {
+	>{}, defaultCustomProducerConsumer<Duration>);
 
-		using Container = decltype(arg)::type;
-
-		testing::getTestResults<Duration, Container>(
-			[](Container* c, int val) { c->push(val); return true; },
-			[](Container* c) { return c->pop(); },
-			[](Container* c) { return c->empty(); },
-			[] { return rand(); },
-			testing::getDefaultSetupArgs(),
-			{},
-			true
-		);
-	});
-
-	testing::for_each(testing::TypeList<boost::lockfree::queue<int>>{}, [](auto arg) {
-		using Container = decltype(arg)::type;
-
-		testing::getTestResults<Duration, Container>(
-			[](Container* c, int val) { c->push(val); return true; },
-			[](Container* c) { int val;  return c->pop(val); },
-			[](Container* c) { return c->empty(); },
-			[] { return rand(); },
-			testing::getDefaultSetupArgs(),
-			{},
-			true,
-			0
-		);
-	});
-
+	testing::for_each(testing::TypeList<boost::lockfree::queue<int>
+	>{}, defaultBoostProducerConsumer<Duration>);
 }
 
 int main() {
